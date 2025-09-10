@@ -3,18 +3,21 @@
   "description": "AI Discovery Engine for Yale Students",
   "version": "1.0.0",
   "scripts": {
-    "start": "npm run dev:full",
+    "start": "node server.js",
     "build": "npm run build",
-    "dev": "npm run dev:full"
+    "dev": "npm run dev:full",
+    "postbuild": "cp server.js dist/ && cp -r node_modules dist/ && cp package.json dist/"
   },
   "engines": {
     "node": ">=18.0.0"
   },
   "build": {
-    "command": "npm run build",
-    "output": "dist"
+    "command": "npm run build && npm run postbuild",
+    "output": "dist",
+    "functions": "server.js"
   },
   "env": {
-    "NODE_ENV": "production"
+    "NODE_ENV": "production",
+    "PORT": "3000"
   }
 }
