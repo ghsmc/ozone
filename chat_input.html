@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Input Interface</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            background: #f8f9fa;
+            color: #333;
+            padding: 40px 20px;
+            min-height: 100vh;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Main Chat Input Container */
+        .chat-container {
+            background: #000000;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 40px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            border: 1px solid #374151;
+        }
+
+        /* Add Resume Button */
+        .add-resume-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #000000;
+            color: #e5e7eb;
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            border: 1px solid #374151;
+            cursor: pointer;
+            margin-bottom: 16px;
+            transition: all 0.2s;
+        }
+
+        .add-resume-btn:hover {
+            background: #111827;
+            border-color: #6b7280;
+        }
+
+        .paperclip-icon {
+            width: 12px;
+            height: 12px;
+        }
+
+        /* Main Input Area */
+        .input-container {
+            position: relative;
+            margin-bottom: 16px;
+        }
+
+        .main-input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #e5e7eb;
+            font-size: 16px;
+            line-height: 1.4;
+            padding: 8px 50px 8px 0;
+            resize: none;
+            min-height: 50px;
+            font-family: inherit;
+        }
+
+        .main-input::placeholder {
+            color: #9ca3af;
+        }
+
+        .send-button {
+            position: absolute;
+            right: 4px;
+            bottom: 4px;
+            width: 32px;
+            height: 32px;
+            background: #6b7280;
+            border: none;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        .send-button:hover {
+            background: #374151;
+        }
+
+        /* Filter Buttons */
+        .filter-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: transparent;
+            border: 1px solid #374151;
+            color: #e5e7eb;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover {
+            border-color: #6b7280;
+            background: #111827;
+        }
+
+        .filter-icon {
+            width: 14px;
+            height: 14px;
+        }
+
+        .chevron-down {
+            width: 10px;
+            height: 10px;
+            margin-left: 4px;
+        }
+
+        /* Bottom Section */
+        .bottom-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            margin-top: 48px;
+        }
+
+        .section-title {
+            color: #6b7280;
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            margin-bottom: 16px;
+        }
+
+        /* Recommended Searches */
+        .search-suggestions {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .search-suggestion {
+            background: #000000;
+            color: #e5e7eb;
+            padding: 14px 16px;
+            border-radius: 10px;
+            border: 1px solid #374151;
+            cursor: pointer;
+            text-align: left;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 1.4;
+            transition: all 0.2s;
+        }
+
+        .search-suggestion:hover {
+            background: #111827;
+            border-color: #6b7280;
+            transform: translateY(-0.5px);
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+        }
+
+        /* Popular Companies */
+        .companies-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 8px;
+        }
+
+        .company-btn {
+            aspect-ratio: 1;
+            background: #000000;
+            border: 1px solid #374151;
+            border-radius: 10px;
+            padding: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .company-btn:hover {
+            background: #111827;
+            border-color: #6b7280;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .company-logo {
+            width: 24px;
+            height: 24px;
+            object-fit: contain;
+            border-radius: 2px;
+            transition: transform 0.2s;
+        }
+
+        .company-btn:hover .company-logo {
+            transform: scale(1.1);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .bottom-section {
+                grid-template-columns: 1fr;
+                gap: 32px;
+            }
+            
+            .companies-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            
+            .filter-buttons {
+                gap: 6px;
+            }
+            
+            .filter-btn {
+                padding: 6px 10px;
+                font-size: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Main Chat Input -->
+        <div class="chat-container">
+            <!-- Add Resume Button -->
+            <button class="add-resume-btn">
+                <svg class="paperclip-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
+                </svg>
+                Add Resume
+            </button>
+
+            <!-- Main Input Area -->
+            <div class="input-container">
+                <textarea 
+                    class="main-input" 
+                    placeholder="Ask, search, or make anything..."
+                    rows="1"
+                ></textarea>
+                <button class="send-button">人</button>
+            </div>
+
+            <!-- Filter Buttons -->
+            <div class="filter-buttons">
+                <button class="filter-btn">
+                    <div style="width: 16px; height: 16px; background: #dc2626; display: flex; align-items: center; justify-content: center; color: white; font-size: 10px; font-weight: bold; border-radius: 2px;">人</div>
+                    Company
+                    <svg class="chevron-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6,9 12,15 18,9"></polyline>
+                    </svg>
+                </button>
+                <button class="filter-btn">
+                    <svg class="filter-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="2" y1="12" x2="22" y2="12"/>
+                        <path d="m5 12c0-4.4 3.6-8 8-8s8 3.6 8 8-3.6 8-8 8-8-3.6-8-8z"/>
+                    </svg>
+                    Industry
+                    <svg class="chevron-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6,9 12,15 18,9"></polyline>
+                    </svg>
+                </button>
+                <button class="filter-btn">
+                    <span style="font-size: 14px;">📍</span>
+                    Location
+                    <svg class="chevron-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6,9 12,15 18,9"></polyline>
+                    </svg>
+                </button>
+                <button class="filter-btn">
+                    <svg class="filter-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+                    </svg>
+                    Role
+                    <svg class="chevron-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6,9 12,15 18,9"></polyline>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Bottom Section -->
+        <div class="bottom-section">
+            <!-- Recommended Searches -->
+            <div>
+                <h3 class="section-title">Recommended Searches</h3>
+                <div class="search-suggestions">
+                    <button class="search-suggestion">Yale alumni working in investment banking</button>
+                    <button class="search-suggestion">Former McKinsey consultants now at tech companies</button>
+                    <button class="search-suggestion">Stanford graduates in AI and machine learning</button>
+                </div>
+            </div>
+
+            <!-- Popular Companies -->
+            <div>
+                <h3 class="section-title">Popular Companies</h3>
+                <div class="companies-grid">
+                    <button class="company-btn">
+                        <img src="https://img.logo.dev/google.com?token=pk_VAZ6tvAVQHCDwKeaNRVyjQ" alt="Google" class="company-logo">
+                    </button>
+                    <button class="company-btn">
+                        <img src="https://img.logo.dev/apple.com?token=pk_VAZ6tvAVQHCDwKeaNRVyjQ" alt="Apple" class="company-logo">
+                    </button>
+                    <button class="company-btn">
+                        <img src="https://img.logo.dev/microsoft.com?token=pk_VAZ6tvAVQHCDwKeaNRVyjQ" alt="Microsoft" class="company-logo">
+                    </button>
+                    <button class="company-btn">
+                        <img src="https://img.logo.dev/meta.com?token=pk_VAZ6tvAVQHCDwKeaNRVyjQ" alt="Meta" class="company-logo">
+                    </button>
+                    <button class="company-btn">
+                        <img src="https://img.logo.dev/amazon.com?token=pk_VAZ6tvAVQHCDwKeaNRVyjQ" alt="Amazon" class="company-logo">
+                    </button>
+                    <button class="company-btn">
+                        <img src="https://img.logo.dev/tesla.com?token=pk_VAZ6tvAVQHCDwKeaNRVyjQ" alt="Tesla" class="company-logo">
+                    </button>
+                    <button class="company-btn">
+                        <img src="https://img.logo.dev/netflix.com?token=pk_VAZ6tvAVQHCDwKeaNRVyjQ" alt="Netflix" class="company-logo">
+                    </button>
+                    <button class="company-btn">
+                        <img src="https://img.logo.dev/goldmansachs.com?token=pk_VAZ6tvAVQHCDwKeaNRVyjQ" alt="Goldman Sachs" class="company-logo">
+                    </button>
+                    <button class="company-btn">
+                        <img src="https://img.logo.dev/mckinsey.com?token=pk_VAZ6tvAVQHCDwKeaNRVyjQ" alt="McKinsey" class="company-logo">
+                    </button>
+                    <button class="company-btn">
+                        <img src="https://img.logo.dev/jpmorgan.com?token=pk_VAZ6tvAVQHCDwKeaNRVyjQ" alt="JPMorgan" class="company-logo">
+                    </button>
+                    <button class="company-btn">
+                        <img src="https://img.logo.dev/stripe.com?token=pk_VAZ6tvAVQHCDwKeaNRVyjQ" alt="Stripe" class="company-logo">
+                    </button>
+                    <button class="company-btn">
+                        <img src="https://img.logo.dev/airbnb.com?token=pk_VAZ6tvAVQHCDwKeaNRVyjQ" alt="Airbnb" class="company-logo">
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const API_BASE = 'http://localhost:3001';
+        const userId = 'demo-user-' + Math.random().toString(36).substr(2, 9);
+        let selectedCategory = null;
+        let userProfile = {};
+
+        // Auto-resize textarea
+        const textarea = document.querySelector('.main-input');
+        textarea.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 200) + 'px';
+        });
+
+        // Status message helper
+        function addStatusMessage(message, icon = "⏳") {
+            const statusDiv = document.createElement('div');
+            statusDiv.className = 'status-message';
+            statusDiv.style.cssText = `
+                background: #1e40af;
+                color: white;
+                padding: 8px 12px;
+                border-radius: 6px;
+                font-size: 12px;
+                margin: 8px 0;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+            `;
+            statusDiv.innerHTML = `${icon} ${message}`;
+            
+            const container = document.querySelector('.chat-container');
+            container.appendChild(statusDiv);
+            
+            // Auto-remove after 3 seconds
+            setTimeout(() => {
+                if (statusDiv.parentNode) {
+                    statusDiv.parentNode.removeChild(statusDiv);
+                }
+            }, 3000);
+        }
+
+        // Add message helper
+        function addMessage(content, isUser = false, type = 'text') {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user' : 'assistant'}`;
+            messageDiv.style.cssText = `
+                margin: 12px 0;
+                padding: 12px 16px;
+                border-radius: 12px;
+                max-width: 80%;
+                ${isUser ? 
+                    'background: #1e40af; color: white; margin-left: auto;' : 
+                    'background: #f3f4f6; color: #374151;'
+                }
+                font-size: 14px;
+                line-height: 1.5;
+            `;
+            
+            if (type === 'formatted') {
+                messageDiv.innerHTML = formatContentEnhanced(content);
+            } else {
+                messageDiv.textContent = content;
+            }
+            
+            const container = document.querySelector('.chat-container');
+            container.appendChild(messageDiv);
+            messageDiv.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Enhanced content formatter
+        function formatContentEnhanced(content) {
+            return content
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                .replace(/\n/g, '<br>')
+                .replace(/🏆/g, '<span style="font-size: 16px;">🏆</span>')
+                .replace(/💡/g, '<span style="font-size: 16px;">💡</span>')
+                .replace(/👥/g, '<span style="font-size: 16px;">👥</span>');
+        }
+
+        // Bundle renderer for live streaming results
+        function renderBundle(payload) {
+            let content = '';
+            
+            if (payload.top_picks && payload.top_picks.length > 0) {
+                content += '🏆 **Top Picks**\n\n';
+                payload.top_picks.forEach((pick, index) => {
+                    content += `${index + 1}. **${pick.title}** at ${pick.company}\n`;
+                    if (pick.location) content += `   📍 ${pick.location}\n`;
+                    if (pick.score) content += `   ⭐ Score: ${pick.score}/100\n`;
+                    if (pick.why && pick.why.length > 0) {
+                        content += `   💡 Why: ${pick.why.join(', ')}\n`;
+                    }
+                    content += '\n';
+                });
+            }
+            
+            if (payload.why_this_works && payload.why_this_works.length > 0) {
+                content += '💡 **Why This Works**\n\n';
+                payload.why_this_works.forEach(point => {
+                    content += `• ${point}\n`;
+                });
+                content += '\n';
+            }
+            
+            if (payload.what_people_are_saying && payload.what_people_are_saying.length > 0) {
+                content += '👥 **What People Are Saying**\n\n';
+                payload.what_people_are_saying.forEach(voice => {
+                    content += `"${voice.quote}" - ${voice.source}\n\n`;
+                });
+            }
+            
+            if (content) {
+                addMessage(content, false, 'formatted');
+            }
+        }
+
+        // Live streaming function
+        async function sendLive(message) {
+            addMessage(message, true);
+            addStatusMessage("Connecting…", "🔌");
+
+            try {
+                const res = await fetch(`${API_BASE}/api/stream`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        userId, 
+                        message, 
+                        category: selectedCategory, 
+                        profile: userProfile 
+                    })
+                });
+
+                if (!res.body) {
+                    addMessage("Streaming not supported by this browser.", false, 'error');
+                    return;
+                }
+
+                const reader = res.body.getReader();
+                const decoder = new TextDecoder();
+                let buf = "";
+
+                while (true) {
+                    const { value, done } = await reader.read();
+                    if (done) break;
+                    buf += decoder.decode(value, { stream: true });
+
+                    // parse SSE frames
+                    const parts = buf.split("\n\n");
+                    buf = parts.pop() || "";
+                    for (const chunk of parts) {
+                        const lines = chunk.split("\n");
+                        let event = "message", data = "";
+                        for (const line of lines) {
+                            if (line.startsWith("event:")) event = line.slice(6).trim();
+                            else if (line.startsWith("data:")) data += line.slice(5).trim();
+                        }
+                        if (!data) continue;
+                        
+                        try {
+                            const payload = JSON.parse(data);
+
+                            if (event === "status") {
+                                addStatusMessage(payload.message, "⏳");
+                            } else if (event === "bundle") {
+                                renderBundle(payload);
+                            } else if (event === "final") {
+                                const formatted = formatContentEnhanced(payload.content || "Done.");
+                                addMessage(formatted, false, 'formatted');
+                            }
+                        } catch (e) {
+                            console.error('Error parsing SSE data:', e);
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Streaming error:', error);
+                addMessage("Error connecting to server. Please try again.", false, 'error');
+            }
+        }
+
+        // Send button functionality
+        const sendButton = document.querySelector('.send-button');
+        const resultsSection = document.getElementById('resultsSection');
+        
+        sendButton.addEventListener('click', function() {
+            const text = textarea.value.trim();
+            if (text) {
+                console.log('Sending:', text);
+                sendLive(text);
+                textarea.value = '';
+                textarea.style.height = 'auto';
+                
+                // Show results section
+                setTimeout(() => {
+                    if (resultsSection) {
+                        resultsSection.style.display = 'block';
+                        resultsSection.scrollIntoView({ behavior: 'smooth' });
+                    }
+                }, 500);
+            }
+        });
+
+        // Enter key to send
+        textarea.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendButton.click();
+            }
+        });
+
+        // Search suggestion clicks
+        document.querySelectorAll('.search-suggestion').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const query = this.textContent;
+                sendLive(query);
+            });
+        });
+
+        // Company logo clicks
+        document.querySelectorAll('.company-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const companyName = this.querySelector('img').alt;
+                sendLive(`Find opportunities at ${companyName}`);
+            });
+        });
+
+        // Query Analysis toggle
+        document.getElementById('queryAnalysisToggle').addEventListener('click', function() {
+            const content = document.getElementById('queryAnalysisContent');
+            const chevron = this.querySelector('.chevron');
+            
+            if (content.style.display === 'none' || content.style.display === '') {
+                content.style.display = 'block';
+                chevron.style.transform = 'rotate(180deg)';
+            } else {
+                content.style.display = 'none';
+                chevron.style.transform = 'rotate(0deg)';
+            }
+        });
+    </script>
+
+    <!-- Results Section (Initially Hidden) -->
+    <div id="resultsSection" class="container mt-8" style="display: none;">
+        <!-- Query Analysis Section -->
+        <div class="bg-white rounded-lg border border-gray-200 shadow-sm mb-6">
+            <div id="queryAnalysisToggle" class="px-6 py-4 cursor-pointer flex items-center justify-between hover:bg-gray-50 transition-colors">
+                <h3 class="text-sm font-semibold text-gray-900 uppercase tracking-wide">Query Analysis</h3>
+                <svg class="chevron w-4 h-4 text-gray-600 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <polyline points="6,9 12,15 18,9"></polyline>
+                </svg>
+            </div>
+            <div id="queryAnalysisContent" class="px-6 pb-6" style="display: none;">
+                <div class="space-y-4">
+                    <!-- Query Explanation -->
+                    <div class="bg-blue-50 border-l-4 border-blue-400 p-4">
+                        <div class="flex">
+                            <div class="ml-3">
+                                <p class="text-sm text-blue-700">
+                                    <strong>🔍 Query Interpretation:</strong> Searching for professionals matching "Yale alumni working in investment banking" across names, titles, companies, and educational background.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- SQL Query -->
+                    <div>
+                        <h4 class="text-xs font-semibold uppercase text-gray-600 mb-2 tracking-wide">Generated SQL Query</h4>
+                        <div class="bg-gray-50 p-4 rounded border text-xs font-mono text-gray-800 overflow-x-auto">
+<pre>SELECT DISTINCT p.person_id, p.full_name, p.headline, p.current_company
+FROM people p
+LEFT JOIN experiences e ON p.person_id = e.person_id
+LEFT JOIN educations ed ON p.person_id = ed.person_id
+WHERE (ed.school LIKE '%Yale%' OR ed.school LIKE '%Yale University%')
+  AND (p.current_title LIKE '%investment%' OR p.current_title LIKE '%banking%'
+       OR e.title LIKE '%investment%' OR e.title LIKE '%banking%')
+ORDER BY p.full_name
+LIMIT 50 OFFSET 0;</pre>
+                        </div>
+                    </div>
+                    
+                    <!-- Extracted Filters -->
+                    <div>
+                        <h4 class="text-xs font-semibold uppercase text-gray-600 mb-2 tracking-wide">Extracted Filters</h4>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-3 py-1 bg-gray-100 border border-gray-300 text-xs text-gray-800 rounded">
+                                School: Yale University
+                            </span>
+                            <span class="px-3 py-1 bg-gray-100 border border-gray-300 text-xs text-gray-800 rounded">
+                                Industry: Investment Banking
+                            </span>
+                            <span class="px-3 py-1 bg-gray-100 border border-gray-300 text-xs text-gray-800 rounded">
+                                Keywords: alumni, working
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg border border-gray-200 shadow-sm">
+            <!-- Results Header -->
+            <div class="px-6 py-4 border-b border-gray-200">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h2 class="text-lg font-semibold text-gray-900">Search Results</h2>
+                        <p class="text-sm text-gray-600 mt-1">0 professionals found</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button class="px-4 py-2 bg-gray-900 text-white text-xs font-semibold uppercase tracking-wide rounded">
+                            Table View
+                        </button>
+                        <button class="px-4 py-2 border border-gray-300 text-gray-600 text-xs font-semibold uppercase tracking-wide rounded hover:border-gray-400">
+                            Card View
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Table -->
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="text-left px-6 py-3 text-xs font-semibold text-gray-900 uppercase tracking-wide">Name</th>
+                            <th class="text-left px-6 py-3 text-xs font-semibold text-gray-900 uppercase tracking-wide">Title</th>
+                            <th class="text-left px-6 py-3 text-xs font-semibold text-gray-900 uppercase tracking-wide">Company</th>
+                            <th class="text-left px-6 py-3 text-xs font-semibold text-gray-900 uppercase tracking-wide">Location</th>
+                            <th class="text-left px-6 py-3 text-xs font-semibold text-gray-900 uppercase tracking-wide">Education</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                        <tr class="hover:bg-gray-50 cursor-pointer">
+                            <td class="px-6 py-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center text-white text-sm font-bold">
+                                        SC
+                                    </div>
+                                    <div>
+                                        <div class="font-semibold text-gray-900">Sarah Chen</div>
+                                        <div class="text-sm text-gray-500">500+ connections</div>
+                                    </div>
+                                </div>
+            <!-- Empty State -->
+            <div class="px-6 py-20 text-center">
+                <p class="text-gray-500">No professionals found matching your criteria.</p>
+            </div>
+
+            <!-- Pagination -->
+            <div class="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
+                <div class="text-sm text-gray-600">
+                    Showing 0 results
+                </div>
+                <div class="flex gap-2">
+                    <button class="px-3 py-1 border border-gray-300 text-gray-600 text-sm rounded hover:border-gray-400" disabled>
+                        Previous
+                    </button>
+                    <button class="px-3 py-1 border border-gray-300 text-gray-600 text-sm rounded hover:border-gray-400" disabled>
+                        Next
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

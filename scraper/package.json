@@ -1,0 +1,19 @@
+{
+  "name": "trackr-scraper",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Web scraper for The Trackr internship data",
+  "main": "the-trackr-scraper.js",
+  "scripts": {
+    "scrape": "node the-trackr-scraper.js",
+    "install-deps": "npm install"
+  },
+  "dependencies": {
+    "puppeteer": "^21.0.0"
+  },
+  "devDependencies": {},
+  "keywords": ["scraping", "internships", "trackr", "finance"],
+  "author": "Milo Platform",
+  "license": "MIT"
+}
+
