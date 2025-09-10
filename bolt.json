@@ -1,0 +1,20 @@
+{
+  "name": "milo-ai-discovery",
+  "description": "AI Discovery Engine for Yale Students",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "npm run dev:full",
+    "build": "npm run build",
+    "dev": "npm run dev:full"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "build": {
+    "command": "npm run build",
+    "output": "dist"
+  },
+  "env": {
+    "NODE_ENV": "production"
+  }
+}
