@@ -428,7 +428,7 @@ function AppContent() {
   }, []);
 
   const handleOnboardingComplete = (profileData: OnboardingData) => {
-    console.log('=== APP: ONBOARDING COMPLETED ===');
+    console.log('Onboarding completed, profile saved to Supabase:', profileData);
     console.log('Profile data received:', profileData);
     setUserProfile(profileData);
     setShowOnboarding(false);

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useDarkMode } from '../contexts/DarkModeContext';
-import { OnboardingData } from '../lib/supabase';
+import { supabase, OnboardingData } from '../lib/supabase';
+import { Loader2 } from 'lucide-react';
 
 interface NewOnboardingProps {
   onComplete: (profileData: OnboardingData) => void;
@@ -10,6 +11,8 @@ interface NewOnboardingProps {
 const NewOnboarding: React.FC<NewOnboardingProps> = ({ onComplete, onBypass }) => {
   const { isDarkMode } = useDarkMode();
   const [currentStep, setCurrentStep] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [formData, setFormData] = useState<OnboardingData>({
     full_name: '',
     graduation_year: new Date().getFullYear(),
@@ -79,18 +82,44 @@ const NewOnboarding: React.FC<NewOnboardingProps> = ({ onComplete, onBypass }) =
   };
 
   const handleComplete = () => {
-    console.log('=== COMPLETE CLICKED ===');
-    console.log('Form data:', formData);
+    saveProfileToSupabase();
+  };
+
+  const saveProfileToSupabase = async () => {
+    setIsSubmitting(true);
+    setSubmitError(null);
     
-    // Add confirmation
-    const confirmed = window.confirm('Are you sure you want to complete onboarding?');
-    if (!confirmed) {
-      console.log('User cancelled completion');
-      return;
+    try {
+      // Create user profile in Supabase
+      const profileData = {
+        ...formData,
+        id: crypto.randomUUID(),
+        email: `${formData.full_name.toLowerCase().replace(/\s+/g, '.')}@yale.edu`,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+
+      console.log('Saving profile to Supabase:', profileData);
+
+      const { data, error } = await supabase
+        .from('user_profiles')
+        .insert([profileData])
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Supabase error:', error);
+        throw new Error(error.message);
+      }
+
+      console.log('Profile saved successfully:', data);
+      onComplete(profileData);
+    } catch (error) {
+      console.error('Error saving profile:', error);
+      setSubmitError(error instanceof Error ? error.message : 'Failed to save profile');
+    } finally {
+      setIsSubmitting(false);
     }
-    
-    console.log('Completing onboarding with data:', formData);
-    onComplete({ ...formData, id: crypto.randomUUID() });
   };
 
   const CurrentStepComponent = steps[currentStep].component;
@@ -159,13 +188,20 @@ const NewOnboarding: React.FC<NewOnboardingProps> = ({ onComplete, onBypass }) =
             </div>
           </div>
 
+          {/* Error Message */}
+          {submitError && (
+            <div className="mb-6 p-4 bg-red-900/50 border border-red-600 rounded-lg">
+              <p className="text-red-200 text-sm">{submitError}</p>
+            </div>
+          )}
+
           {/* Navigation */}
           <div className="flex justify-between items-center">
             <button
               onClick={handleBack}
-              disabled={isFirstStep}
+              disabled={isFirstStep || isSubmitting}
               className={`px-6 py-3 font-medium transition-all duration-200 ${
-                isFirstStep
+                isFirstStep || isSubmitting
                   ? 'text-gray-800 cursor-not-allowed'
                   : 'text-gray-400 hover:text-white'
               }`}
@@ -184,9 +220,23 @@ const NewOnboarding: React.FC<NewOnboardingProps> = ({ onComplete, onBypass }) =
             
             <button
               onClick={isLastStep ? handleComplete : handleNext}
-              className="bg-red-600 hover:bg-red-700 text-white px-8 py-3 font-medium transition-all duration-200 rounded-lg"
+              disabled={!isStepValid() || isSubmitting}
+              className={`flex items-center gap-2 px-8 py-3 font-medium transition-all duration-200 rounded-lg ${
+                !isStepValid() || isSubmitting
+                  ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
+                  : 'bg-red-600 hover:bg-red-700 text-white'
+              }`}
             >
-              {isLastStep ? 'Complete' : 'Continue'}
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Saving...
+                </>
+              ) : isLastStep ? (
+                'Complete Setup'
+              ) : (
+                'Continue'
+              )}
             </button>
           </div>
         </div>
