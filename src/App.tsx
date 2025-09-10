@@ -186,14 +186,14 @@ function App() {
   };
 
   // Helper method to validate JSON before parsing
-  private isValidJSON(str: string): boolean {
+  const isValidJSON = (str: string): boolean => {
     try {
       JSON.parse(str);
       return true;
     } catch {
       return false;
     }
-  }
+  };
 
   const handleClear = () => {
     setResults(null);
