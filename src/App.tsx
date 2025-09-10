@@ -143,7 +143,7 @@ function App() {
                 if (!jsonStr) continue;
                 
                 // Handle potential malformed JSON by validating before parsing
-                if (!this.isValidJSON(jsonStr)) {
+                if (!isValidJSON(jsonStr)) {
                   console.warn('Skipping malformed JSON:', jsonStr);
                   continue;
                 }
