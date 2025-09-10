@@ -8,6 +8,10 @@ echo "🚀 Deploying Milo AI Discovery Engine..."
 echo "📦 Installing dependencies..."
 npm install
 
+# Install scraper dependencies
+echo "📦 Installing scraper dependencies..."
+cd scraper && npm install && cd ..
+
 # Build the project
 echo "🔨 Building project..."
 npm run build
