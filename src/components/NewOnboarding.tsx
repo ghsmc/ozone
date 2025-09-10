@@ -126,6 +126,17 @@ const NewOnboarding: React.FC<NewOnboardingProps> = ({ onComplete, onBypass }) =
   const isLastStep = currentStep === steps.length - 1;
   const isFirstStep = currentStep === 0;
 
+  // Validation for current step
+  const isStepValid = () => {
+    switch (currentStep) {
+      case 0: return true; // Welcome step
+      case 1: return formData.full_name.trim() && formData.major.trim();
+      case 2: return formData.preferred_industries.length > 0;
+      case 3: return formData.career_goals.trim();
+      default: return true;
+    }
+  };
+
   return (
     <div className="min-h-screen bg-black text-white flex flex-col">
       {/* Header */}
