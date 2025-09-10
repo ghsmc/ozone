@@ -14,6 +14,8 @@ const NewOnboarding: React.FC<NewOnboardingProps> = ({ onComplete, onBypass }) =
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [formData, setFormData] = useState<OnboardingData>({
+    email: '',
+    password: '',
     full_name: '',
     graduation_year: new Date().getFullYear(),
     major: '',
@@ -90,11 +92,40 @@ const NewOnboarding: React.FC<NewOnboardingProps> = ({ onComplete, onBypass }) =
     setSubmitError(null);
     
     try {
-      // Create user profile in Supabase
+      // First, create the user account with Supabase Auth
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: formData.email,
+        password: formData.password!
+      });
+
+      if (authError) {
+        console.error('Auth error:', authError);
+        throw new Error(authError.message);
+      }
+
+      if (!authData.user) {
+        throw new Error('Failed to create user account');
+      }
+
+      console.log('User created successfully:', authData.user);
+
+      // Then create the user profile using the authenticated user's ID and email
       const profileData = {
-        ...formData,
-        id: crypto.randomUUID(),
-        email: `${formData.full_name.toLowerCase().replace(/\s+/g, '.')}@yale.edu`,
+        id: authData.user.id,
+        email: authData.user.email!,
+        full_name: formData.full_name,
+        graduation_year: formData.graduation_year,
+        major: formData.major,
+        gpa: formData.gpa,
+        preferred_locations: formData.preferred_locations,
+        preferred_industries: formData.preferred_industries,
+        preferred_company_sizes: formData.preferred_company_sizes,
+        work_model_preference: formData.work_model_preference,
+        salary_expectation_min: formData.salary_expectation_min,
+        salary_expectation_max: formData.salary_expectation_max,
+        skills: formData.skills,
+        interests: formData.interests,
+        career_goals: formData.career_goals,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       };
@@ -102,7 +133,7 @@ const NewOnboarding: React.FC<NewOnboardingProps> = ({ onComplete, onBypass }) =
       console.log('Saving profile to Supabase:', profileData);
 
       const { data, error } = await supabase
-        .from('user_profiles')
+        .from('profiles')
         .insert([profileData])
         .select()
         .single();
@@ -130,7 +161,7 @@ const NewOnboarding: React.FC<NewOnboardingProps> = ({ onComplete, onBypass }) =
   const isStepValid = () => {
     switch (currentStep) {
       case 0: return true; // Welcome step
-      case 1: return formData.full_name.trim() && formData.major.trim();
+      case 1: return formData.full_name.trim() && formData.major.trim() && formData.email.trim() && formData.password && formData.password.length >= 6;
       case 2: return formData.preferred_industries.length > 0;
       case 3: return formData.career_goals.trim();
       default: return true;
@@ -294,6 +325,34 @@ const BasicInfoStep: React.FC<{
     <div className="space-y-6">
       <div>
         <label className="block text-sm font-medium text-gray-300 mb-2">
+          Yale Email
+        </label>
+        <input
+          type="email"
+          value={formData.email}
+          onChange={(e) => updateFormData({ email: e.target.value })}
+          className="w-full px-4 py-3 bg-gray-900 border border-gray-800 text-white rounded-lg focus:border-red-600 focus:outline-none"
+          placeholder="your.name@yale.edu"
+        />
+      </div>
+      
+      <div>
+        <label className="block text-sm font-medium text-gray-300 mb-2">
+          Password
+        </label>
+        <input
+          type="password"
+          value={formData.password || ''}
+          onChange={(e) => updateFormData({ password: e.target.value })}
+          className="w-full px-4 py-3 bg-gray-900 border border-gray-800 text-white rounded-lg focus:border-red-600 focus:outline-none"
+          placeholder="Enter a secure password"
+          minLength={6}
+        />
+        <p className="text-xs text-gray-500 mt-1">Minimum 6 characters</p>
+      </div>
+      
+      <div>
+        <label className="block text-sm font-medium text-gray-300 mb-2">
           Full Name
         </label>
         <input
@@ -422,6 +481,7 @@ const CompleteStep: React.FC<{
         <h4 className="text-sm font-medium text-gray-300 mb-2">Your Profile:</h4>
         <div className="text-sm text-gray-400 space-y-1">
           <div>Name: {formData.full_name}</div>
+          <div>Email: {formData.email}</div>
           <div>Graduation: {formData.graduation_year}</div>
           <div>Major: {formData.major}</div>
           <div>Interests: {formData.preferred_industries?.join(', ')}</div>

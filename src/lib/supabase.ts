@@ -20,7 +20,8 @@ export interface UserProfile extends OnboardingData {
 
 export interface OnboardingData {
   id?: string
-  email?: string
+  email: string
+  password?: string
   full_name: string
   graduation_year: number
   major: string
