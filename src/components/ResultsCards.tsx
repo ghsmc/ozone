@@ -67,16 +67,16 @@ export const ResultsCards: React.FC<ResultsCardsProps> = ({ professionals }) => 
             </div>
           )}
           
-          {professional.skills.length > 0 && (
+          {professional.skills && professional.skills.length > 0 && (
             <div>
               <h4 className="text-sm font-medium text-gray-900 mb-2">Skills</h4>
               <div className="flex flex-wrap gap-1">
-                {professional.skills.slice(0, 6).map((skill, index) => (
+                {(professional.skills || []).slice(0, 6).map((skill, index) => (
                   <span key={index} className="px-2 py-1 bg-gray-100 text-xs text-gray-700 rounded">
                     {skill}
                   </span>
                 ))}
-                {professional.skills.length > 6 && (
+                {professional.skills && professional.skills.length > 6 && (
                   <span className="px-2 py-1 bg-gray-100 text-xs text-gray-500 rounded">
                     +{professional.skills.length - 6} more
                   </span>
